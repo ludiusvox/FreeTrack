@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">FreeTrack</string>
+    <string name="title_map">Live Map</string>
+    <string name="title_elevation">Elevation</string>
+    <string name="title_weight">Weight Log</string>
+    <string name="start_tracking">Start Tracking</string>
+    <string name="stop_tracking">Stop Tracking</string>
+</resources>

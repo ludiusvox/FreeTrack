@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_map"
+        android:icon="@android:drawable/ic_dialog_map"
+        android:title="Live Map" />
+    <item
+        android:id="@+id/nav_elevation"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Elevation" />
+    <item
+        android:id="@+id/nav_weight"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="Weight Log" />
+</menu>
