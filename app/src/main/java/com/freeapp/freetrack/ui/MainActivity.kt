@@ -5,17 +5,22 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.freeapp.freetrack.R
+import androidx.lifecycle.lifecycleScope
+import com.freeapp.freetrack.data.AppDatabase
 import com.freeapp.freetrack.databinding.ActivityMainBinding
 import com.freeapp.freetrack.service.TrackingService
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val database by lazy { AppDatabase.getDatabase(this) }
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -67,12 +72,36 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        binding.fabResetRoute.setOnClickListener {
+            resetRoute()
+        }
+
+        binding.fabResetRoute.visibility = View.VISIBLE
+
         // Default screen is Map
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, MapFragment())
                 .commit()
         }
+    }
+
+    private fun resetRoute() {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Reset Route")
+            .setMessage("Are you sure you want to clear all tracked data and reset the distance?")
+            .setPositiveButton("Reset") { _, _ ->
+                lifecycleScope.launch {
+                    database.gpsPointDao().clearAll()
+                    val intent = Intent(this@MainActivity, TrackingService::class.java).apply {
+                        action = TrackingService.ACTION_RESET_TRACKING
+                    }
+                    startService(intent)
+                    Toast.makeText(this@MainActivity, "Route Reset", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun checkPermissionsAndStartTracking() {

@@ -72,8 +72,14 @@ class MapFragment : Fragment() {
 
                     // Center camera on latest point
                     binding.mapView.controller.animateTo(GeoPoint(latest.latitude, latest.longitude))
-                    binding.mapView.invalidate()
+                } else {
+                    trailPolyline.setPoints(emptyList())
+                    binding.tvCoordinates.text = "Lat: --, Lon: --"
+                    binding.tvBaroAlt.text = "Alt (Baro): -- m"
+                    binding.tvSpeed.text = "Speed: -- km/h"
+                    binding.tvPressure.text = "Pres: -- hPa"
                 }
+                binding.mapView.invalidate()
             }
         }
     }

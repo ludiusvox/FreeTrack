@@ -53,6 +53,7 @@ class TrackingService : Service(), SensorEventListener {
     companion object {
         const val ACTION_START_TRACKING = "ACTION_START_TRACKING"
         const val ACTION_STOP_TRACKING = "ACTION_STOP_TRACKING"
+        const val ACTION_RESET_TRACKING = "ACTION_RESET_TRACKING"
         const val NOTIFICATION_CHANNEL_ID = "freetrack_location_channel"
         const val NOTIFICATION_ID = 4201
 
@@ -74,6 +75,7 @@ class TrackingService : Service(), SensorEventListener {
         when (intent?.action) {
             ACTION_START_TRACKING -> startTracking()
             ACTION_STOP_TRACKING -> stopTracking()
+            ACTION_RESET_TRACKING -> resetTracking()
         }
         return START_STICKY
     }
@@ -91,6 +93,15 @@ class TrackingService : Service(), SensorEventListener {
 
         // Request high-accuracy GPS updates via FusedLocationProviderClient
         requestLocationUpdates()
+    }
+
+    private fun resetTracking() {
+        totalDistanceKm = 0.0
+        lastLocation = null
+        isFirstPressureReading = true
+        serviceScope.launch {
+            database.gpsPointDao().clearAll()
+        }
     }
 
     @SuppressLint("MissingPermission")
